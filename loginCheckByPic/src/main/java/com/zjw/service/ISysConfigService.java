@@ -12,5 +12,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-04-02
  */
 public interface ISysConfigService extends IService<SysConfig> {
-    Boolean getCaptchaEnable(String key);
+
+    Boolean getCaptchaEnable();
+
+    String getConfigByKey(String key);
 }

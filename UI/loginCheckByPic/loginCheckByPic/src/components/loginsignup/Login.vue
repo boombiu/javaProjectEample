@@ -95,7 +95,7 @@ export default {
                 timeout: 20000
             }).then(res=>{
               console.log(res)
-                this.codeUrl = "data:image/gif;base64," + res.data.data;
+                this.codeUrl = "data:image/gif;base64," + res.data.data.image;
                 // this.codeUrl = res.data;
                 this.loginForm.uuid = res.uuid;
             })

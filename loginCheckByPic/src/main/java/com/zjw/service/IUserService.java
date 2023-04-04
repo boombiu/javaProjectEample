@@ -1,7 +1,10 @@
 package com.zjw.service;
 
+import com.zjw.constants.R;
+import com.zjw.model.LoginBody;
 import com.zjw.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * <p>
@@ -13,6 +16,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserService extends IService<User> {
 
-    String login(User user);
+
+    R login(@RequestBody LoginBody loginBody);
+
     String register(User user);
 }

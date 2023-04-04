@@ -1,5 +1,7 @@
 package com.zjw.controller;
 
+import com.zjw.constants.R;
+import com.zjw.model.LoginBody;
 import com.zjw.model.User;
 import com.zjw.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +22,9 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
-    @GetMapping("/login")
-    public String login(@RequestBody User user){
-        return userService.login(user);
-
+    @PostMapping("/login")
+    public R login(@RequestBody LoginBody loginBody){
+        return userService.login(loginBody);
     }
 
 
