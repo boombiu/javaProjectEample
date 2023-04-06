@@ -41,9 +41,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (!captchaVerify) {
             return R.faild();
         }
-
+        //验证过用户名密码
         QueryWrapper<User> userQR = new QueryWrapper<>();
-        userQR.eq("USER_NAME", loginBody.getUserName());
+        userQR.eq("USER_NAME", username);
         User userInDb = userMapper.selectOne(userQR);
         if (userInDb != null && loginBody.getUserPassword().equals(userInDb.getUserPassword())) {
             return R.ok();

@@ -40,7 +40,7 @@
             <button  @click="getCode">获取验证码</button>
           </div>
         </el-form-item>
-
+        <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
         <el-form-item style="width:100%;">
           <el-button
             :loading="loading"
@@ -85,6 +85,22 @@ export default {
 
     },
     methods:{
+      handleLogin() {
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true;
+          if (this.loginForm.rememberMe) {
+            Cookies.set("username", this.loginForm.username, { expires: 30 });
+            Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
+            Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
+          } else {
+            Cookies.remove("username");
+            Cookies.remove("password");
+            Cookies.remove('rememberMe');
+          }
+        }
+      });
+    },
         getCode(){
             return request({
                 url: '/captchaImage',
@@ -96,10 +112,22 @@ export default {
             }).then(res=>{
               console.log(res)
                 this.codeUrl = "data:image/gif;base64," + res.data.data.image;
-                // this.codeUrl = res.data;
                 this.loginForm.uuid = res.uuid;
             })
             
+        },
+        login(){
+          return request({
+                url: '/login',
+                headers: {
+                isToken: false
+                },
+                data: this.loginForm,
+                method: 'post',
+                timeout: 20000
+            }).then(() => {
+            this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
+            })
         }
     }
 }
