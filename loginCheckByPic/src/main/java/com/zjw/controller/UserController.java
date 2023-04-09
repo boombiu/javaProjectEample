@@ -1,12 +1,11 @@
 package com.zjw.controller;
 
-import com.zjw.constants.R;
+import com.zjw.constants.RespResult;
 import com.zjw.model.LoginBody;
 import com.zjw.model.User;
 import com.zjw.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.stereotype.Controller;
 
 /**
  * <p>
@@ -17,13 +16,13 @@ import org.springframework.stereotype.Controller;
  * @since 2023-02-21
  */
 @RestController
-@RequestMapping("/user")
+@CrossOrigin
 public class UserController {
 
     @Autowired
     private IUserService userService;
     @PostMapping("/login")
-    public R login(@RequestBody LoginBody loginBody){
+    public RespResult login(@RequestBody LoginBody loginBody){
         return userService.login(loginBody);
     }
 

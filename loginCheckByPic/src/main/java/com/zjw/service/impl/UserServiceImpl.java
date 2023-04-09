@@ -6,7 +6,9 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zjw.comminutils.constants.Constants;
 import com.zjw.comminutils.utils.RedisUtil;
-import com.zjw.constants.R;
+import com.zjw.constants.RespResult;
+import com.zjw.enums.ErrorCode;
+import com.zjw.enums.SuccessCode;
 import com.zjw.model.LoginBody;
 import com.zjw.model.User;
 import com.zjw.mapper.UserMapper;
@@ -32,23 +34,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private RedisUtil redisUtil;
 
     @Override
-    public R login(@RequestBody LoginBody loginBody) {
+    public RespResult login(@RequestBody LoginBody loginBody) {
         String username = loginBody.getUserName();
         String code = loginBody.getCode();
         String uuid = IdUtil.fastSimpleUUID();
         //先校验验证码
         Boolean captchaVerify = validateCaptcha(code, uuid);
         if (!captchaVerify) {
-            return R.faild();
+            return new RespResult(ErrorCode.CAPTCHA_MISMATCH);
         }
         //验证过用户名密码
         QueryWrapper<User> userQR = new QueryWrapper<>();
         userQR.eq("USER_NAME", username);
         User userInDb = userMapper.selectOne(userQR);
         if (userInDb != null && loginBody.getUserPassword().equals(userInDb.getUserPassword())) {
-            return R.ok();
+            return new RespResult(SuccessCode.LOGIN_SUCCESS);
         }
-        return R.faild();
+        return new RespResult(ErrorCode.LOGIN_FAIL);
     }
 
     private Boolean validateCaptcha(String code, String uuid) {

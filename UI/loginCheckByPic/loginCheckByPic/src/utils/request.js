@@ -2,7 +2,7 @@ import axios from 'axios'
 import errorCode from '@/utils/errorCode'
 import { getToken } from '@/utils/auth'
 import { Notification, MessageBox, Message, Loading } from 'element-ui'
-
+import cache from '@/plugins/cache'
 
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
@@ -23,12 +23,10 @@ service.interceptors.request.use(config => {
   // 是否需要防止数据重复提交
   const isRepeatSubmit = (config.headers || {}).repeatSubmit === false
   if (getToken() && !isToken) {
-    console.log("request中isToken")
     config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
   }
   // get请求映射params参数
   if (config.method === 'get' && config.params) {
-    console.log("request中5")
     let url = config.url + '?' + tansParams(config.params);
     url = url.slice(0, -1);
     config.params = {};
@@ -43,10 +41,8 @@ service.interceptors.request.use(config => {
     }
     const sessionObj = cache.session.getJSON('sessionObj')
     if (sessionObj === undefined || sessionObj === null || sessionObj === '') {
-      console.log("request中3")
       cache.session.setJSON('sessionObj', requestObj)
     } else {
-      console.log("request中2")
       const s_url = sessionObj.url;                  // 请求地址
       const s_data = sessionObj.data;                // 请求数据
       const s_time = sessionObj.time;                // 请求时间
@@ -62,22 +58,23 @@ service.interceptors.request.use(config => {
   }
   return config
 }, error => {
-  console.log("request中1")
-    console.log(error)
     Promise.reject(error)
 })
 
 // 响应拦截器
 service.interceptors.response.use(res => {
+    console.log("响应拦截器");
     // 未设置状态码则默认成功状态
     const code = res.data.code || 200;
     // 获取错误信息
     const msg = errorCode[code] || res.data.msg || errorCode['default']
     // 二进制数据则直接返回
-    if(res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer'){
-      return res.data
-    }
+    // if(res.responseType ===  'blob' || res.request.responseType ===  'arraybuffer'){
+    //   console.log("返回的是二进制数据");  
+    //   return res.data
+    // }
     if (code === 401) {
+      console.log("code")
       if (!isRelogin.show) {
         isRelogin.show = true;
         MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', { confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' }).then(() => {
@@ -96,12 +93,13 @@ service.interceptors.response.use(res => {
     } else if (code === 601) {
       Message({ message: msg, type: 'warning' })
       return Promise.reject('error')
-    } else if (code !== 200) {
+    } else if (code.startsWith("0")) {
       Notification.error({ title: msg })
       return Promise.reject('error')
     } else {
       return res.data
     }
+
   },
   error => {
     console.log('err' + error)

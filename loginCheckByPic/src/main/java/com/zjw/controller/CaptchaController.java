@@ -3,10 +3,11 @@ package com.zjw.controller;
 import cn.hutool.core.util.IdUtil;
 import com.google.code.kaptcha.Producer;
 import com.zjw.comminutils.utils.RedisUtil;
-import com.zjw.constants.R;
-import com.zjw.model.User;
+import com.zjw.constants.RespResult;
+import com.zjw.enums.ErrorCode;
+import com.zjw.enums.RespCode;
+import com.zjw.enums.SuccessCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +16,6 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +36,7 @@ public class CaptchaController {
     private Producer captchaProducerMath;
 
     @GetMapping("/captchaImage")
-    public R getCode() {
-        R r = new R();
+    public RespResult getCode() {
         String captchaImage = null;
         String code = null;
         try {
@@ -50,7 +49,7 @@ public class CaptchaController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new R("01", "生成验证码失败", null);
+            return new RespResult(ErrorCode.CREAT_CAPTCHA_FAILED);
         }
         String uuid = IdUtil.fastSimpleUUID();
         String verifyKey = CAPTCHA_CACHE + uuid;
@@ -59,10 +58,8 @@ public class CaptchaController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("image",captchaImage);
         resultMap.put("uuid",uuid);
-        r.setCode("00");
-        r.setMsg("生成验证码成功");
-        r.setData(resultMap);
-        return r;
+
+        return new RespResult(SuccessCode.CREAT_CAPTCHA_SUCCESS,resultMap);
 
     }
 }

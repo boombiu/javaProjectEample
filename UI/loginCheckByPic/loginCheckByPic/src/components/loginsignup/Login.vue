@@ -64,13 +64,14 @@
 
 <script>
 import request from '@/utils/request'
+import Cookies from "js-cookie";
 export default {
     name:"Login",
     data(){
         return {
             loginForm: {
-                username: "admin",
-                password: "admin123",
+              userName: "admin",
+              userPassword: "admin123",
                 code: "",
                 uuid: ""
             },
@@ -87,17 +88,31 @@ export default {
     methods:{
       handleLogin() {
       this.$refs.loginForm.validate(valid => {
+        console.log("cookie")
         if (valid) {
           this.loading = true;
           if (this.loginForm.rememberMe) {
-            Cookies.set("username", this.loginForm.username, { expires: 30 });
-            Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
+            Cookies.set("username", this.loginForm.userName, { expires: 30 });
+            Cookies.set("password", this.loginForm.userPassword, { expires: 30 });
             Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
           } else {
             Cookies.remove("username");
             Cookies.remove("password");
             Cookies.remove('rememberMe');
           }
+          console.log(this.loginForm)
+          request({
+                url: '/login',
+                data: this.loginForm,
+                headers: {
+                isToken: false
+                },
+                method: 'post',
+                timeout: 20000
+            }).then(res=>{
+              console.log(res)
+              this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
+            })
         }
       });
     },
@@ -111,7 +126,7 @@ export default {
                 timeout: 20000
             }).then(res=>{
               console.log(res)
-                this.codeUrl = "data:image/gif;base64," + res.data.data.image;
+                this.codeUrl = "data:image/gif;base64," + res.data.image;
                 this.loginForm.uuid = res.uuid;
             })
             
