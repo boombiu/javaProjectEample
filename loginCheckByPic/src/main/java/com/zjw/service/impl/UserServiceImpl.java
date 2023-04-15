@@ -37,7 +37,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public RespResult login(@RequestBody LoginBody loginBody) {
         String username = loginBody.getUserName();
         String code = loginBody.getCode();
-        String uuid = IdUtil.fastSimpleUUID();
+        String uuid = loginBody.getUuid();
         //先校验验证码
         Boolean captchaVerify = validateCaptcha(code, uuid);
         if (!captchaVerify) {
@@ -62,7 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public String register(User user) {
-        String userEmail = user.getUserEmail();
+        String userEmail = user.getUserEmail(); 
         if (userEmail == null || userEmail.equals("")) {
             return "邮箱为必输";
         }

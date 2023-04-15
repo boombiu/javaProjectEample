@@ -53,6 +53,7 @@ public class CaptchaController {
         }
         String uuid = IdUtil.fastSimpleUUID();
         String verifyKey = CAPTCHA_CACHE + uuid;
+        System.out.println("verifyKey = " + verifyKey);
         boolean set = redisUtil.set(verifyKey, code, 2, TimeUnit.MINUTES);
 
         Map<String, Object> resultMap = new HashMap<>();

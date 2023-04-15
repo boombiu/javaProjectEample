@@ -2,9 +2,9 @@
     <div class="login">
       <el-form ref="loginForm" :model="loginForm"  class="login-form">
         <h3 class="title">后台管理系统</h3>
-        <el-form-item prop="username">
+        <el-form-item prop="userName">
           <el-input
-            v-model="loginForm.username"
+            v-model="loginForm.userName"
             type="text"
             auto-complete="off"
             placeholder="账号"
@@ -12,9 +12,9 @@
             <!-- <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" /> -->
           </el-input>
         </el-form-item>
-        <el-form-item prop="password">
+        <el-form-item prop="userPassword">
           <el-input
-            v-model="loginForm.password"
+            v-model="loginForm.userPassword"
             type="password"
             auto-complete="off"
             placeholder="密码"
@@ -70,8 +70,8 @@ export default {
     data(){
         return {
             loginForm: {
-              userName: "admin",
-              userPassword: "admin123",
+              userName: "zjw",
+              userPassword: "123",
                 code: "",
                 uuid: ""
             },
@@ -92,18 +92,29 @@ export default {
         if (valid) {
           this.loading = true;
           if (this.loginForm.rememberMe) {
-            Cookies.set("username", this.loginForm.userName, { expires: 30 });
-            Cookies.set("password", this.loginForm.userPassword, { expires: 30 });
+            Cookies.set("userName", this.loginForm.userName, { expires: 30 });
+            Cookies.set("userPassword", this.loginForm.userPassword, { expires: 30 });
             Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
+            console.log(Cookies.get("userName"))
           } else {
-            Cookies.remove("username");
-            Cookies.remove("password");
+            Cookies.remove("userName");
+            Cookies.remove("userPassword");
             Cookies.remove('rememberMe');
           }
           console.log(this.loginForm)
-          request({
+          const loginData = {
+            userName: "zjw",
+            userPassword: "123",
+            code: this.loginForm.code,
+            uuid: this.loginForm.uuid
+          }
+          console.log("this.loginForm")
+          console.log(this.loginForm)
+          console.log("loginData")
+          console.log(loginData)
+          return request({
                 url: '/login',
-                data: this.loginForm,
+                data: loginData,
                 headers: {
                 isToken: false
                 },
@@ -126,8 +137,9 @@ export default {
                 timeout: 20000
             }).then(res=>{
               console.log(res)
+              console.log(res)
                 this.codeUrl = "data:image/gif;base64," + res.data.image;
-                this.loginForm.uuid = res.uuid;
+                this.loginForm.uuid = res.data.uuid;
             })
             
         },

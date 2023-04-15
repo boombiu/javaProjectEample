@@ -33,18 +33,22 @@ service.interceptors.request.use(config => {
     config.url = url;
   }
   if (!isRepeatSubmit && (config.method === 'post' || config.method === 'put')) {
+    console.log(config.data)
     console.log("request中4")
     const requestObj = {
       url: config.url,
-      data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
+      // data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
+      data: config.data,
       time: new Date().getTime()
     }
     const sessionObj = cache.session.getJSON('sessionObj')
+    console.log(sessionObj)
     if (sessionObj === undefined || sessionObj === null || sessionObj === '') {
       cache.session.setJSON('sessionObj', requestObj)
     } else {
       const s_url = sessionObj.url;                  // 请求地址
-      const s_data = sessionObj.data;                // 请求数据
+      // const s_data = sessionObj.data;                // 请求数据
+      const s_data = config.data;                // 请求数据
       const s_time = sessionObj.time;                // 请求时间
       const interval = 1000;                         // 间隔时间(ms)，小于此时间视为重复提交
       if (s_data === requestObj.data && requestObj.time - s_time < interval && s_url === requestObj.url) {
