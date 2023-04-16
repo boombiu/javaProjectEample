@@ -24,7 +24,9 @@ public enum ErrorCode implements RespCode {
     private String code;
     private String msg;
 
-    @Override
+
+
+	@Override
     public String getCode() {
         return this.code;
     }

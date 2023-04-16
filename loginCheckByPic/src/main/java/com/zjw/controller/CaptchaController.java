@@ -7,6 +7,9 @@ import com.zjw.constants.RespResult;
 import com.zjw.enums.ErrorCode;
 import com.zjw.enums.RespCode;
 import com.zjw.enums.SuccessCode;
+import com.zjw.model.LoginBody;
+
+import org.apache.ibatis.javassist.expr.NewArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,6 +63,7 @@ public class CaptchaController {
         resultMap.put("image",captchaImage);
         resultMap.put("uuid",uuid);
 
+        
         return new RespResult(SuccessCode.CREAT_CAPTCHA_SUCCESS,resultMap);
 
     }
